@@ -11,6 +11,7 @@ export const rename = async () => {
         if (errNoException) {
           fs.rename(path, pathRename, err => {
             if (err) throw err;
+            console.log('File has been renamed');
           });
         } else {
           throw new Error(errorText);

@@ -12,6 +12,7 @@ export const create = async () => {
       });
       fs.appendFile(path, data, (err) => {
         if (err) throw err;
+        console.log('File has been created');
       });
     } else {
       throw new Error(errorText);

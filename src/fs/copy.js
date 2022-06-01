@@ -1,32 +1,37 @@
-import fs from 'fs';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { errorText } from '../utils/constants.js';
 
 export const copy = async () => {
-  const path = 'files';
-  const pathCopy = 'files_copy';
-  const errorText = 'FS operation failed';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const path = `${__dirname}/files`;
+  const pathCopy = `${__dirname}/files_copy`;
 
-  fs.access(path, (errNoException) => {
-    if (!errNoException) {
-      fs.access(pathCopy, (errNoException) => {
-        if (errNoException) {
-          fs.mkdir(pathCopy, (err) => {
-            if (err) throw err;
-            fs.readdir(path, (err, files) => {
-              if (err) throw err;
-              files.forEach(file => {
-                fs.copyFile(`${path}/${file}`, `${pathCopy}/${file}`, err => {
-                  if (err) throw err;
-                  console.log('Files have been copied');
-                });
-              });
-            })
-          });
-        } else {
-          throw new Error(errorText);
+  try {
+    await fs.access(path);
+    throw new Error(errorText);
+  } catch (error) {
+    if (error.message === errorText) {
+      try {
+        await fs.access(pathCopy);
+        throw new Error(errorText);
+      } catch (error) {
+        if (error.message === errorText) throw new Error(errorText);
+        try {
+          const files = await fs.readdir(path);
+          fs.mkdir(pathCopy);
+          await Promise.all(files.map((file) => fs.copyFile(`${path}/${file}`, `${pathCopy}/${file}`)))
+          console.log('Files have been copied');
+        } catch (error) {
+          throw error;
         }
-      });
+      }
     } else {
       throw new Error(errorText);
     }
-  });
+  }
 };
+
+copy();

@@ -1,24 +1,35 @@
-import fs from 'fs';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { errorText } from '../utils/constants.js';
 
 export const rename = async () => {
-  const path = 'files/wrongFilename.txt';
-  const pathRename = 'files/properFilename.md';
-  const errorText = 'FS operation failed';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const path = `${__dirname}/files/wrongFilename.txt`;
+  const pathRename = `${__dirname}/files/properFilename.md`;
 
-  fs.access(path, (errNoException) => {
-    if (!errNoException) {
-      fs.access(pathRename, (errNoException) => {
-        if (errNoException) {
-          fs.rename(path, pathRename, err => {
-            if (err) throw err;
-            console.log('File has been renamed');
-          });
-        } else {
-          throw new Error(errorText);
+  try {
+    await fs.access(path);
+    throw new Error(errorText);
+  } catch (error) {
+    if (error.message === errorText) {
+      try {
+        await fs.access(pathRename);
+        throw new Error(errorText);
+      } catch (error) {
+        if (error.message === errorText) throw new Error(errorText);
+        try {
+          await fs.rename(path, pathRename);
+          console.log('File has been renamed');
+        } catch (error) {
+          throw error;
         }
-      });
+      }
     } else {
       throw new Error(errorText);
     }
-  });
+  }
 };
+
+rename();

@@ -1,19 +1,28 @@
-import fs from 'fs';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { errorText } from '../utils/constants.js';
 
 export const remove = async () => {
-  const path = 'files/fileToRemove.txt';
-  const errorText = 'FS operation failed';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const path = `${__dirname}/files/fileToRemove.txt`;
 
-  fs.access(path, (errNoException) => {
-    if (!errNoException) {
-      fs.unlink(path, err => {
-        if (err) throw err;
+  try {
+    await fs.access(path);
+    throw new Error(errorText);
+  } catch (error) {
+    if (error.message === errorText) {
+      try {
+        await fs.unlink(path);
         console.log('File has been deleted');
-      });
+      } catch (error) {
+        throw error;
+      }
     } else {
       throw new Error(errorText);
     }
-  });
+  }
 };
 
 remove();

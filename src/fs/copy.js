@@ -22,7 +22,11 @@ export const copy = async () => {
         try {
           const files = await fs.readdir(path);
           fs.mkdir(pathCopy);
-          await Promise.all(files.map((file) => fs.copyFile(`${path}/${file}`, `${pathCopy}/${file}`)))
+          await Promise.all(
+            files.map((file) =>
+              fs.copyFile(`${path}/${file}`, `${pathCopy}/${file}`)
+            )
+          );
           console.log('Files have been copied');
         } catch (error) {
           throw error;

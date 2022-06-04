@@ -10,7 +10,9 @@ const reverseString = new Transform({
 
 export const transform = async () => {
   pipeline(stdin, reverseString, stdout, (error) => {
-    throw new Error(error);
+    if (error) {
+      throw new Error(error);
+    }
   });
 };
 

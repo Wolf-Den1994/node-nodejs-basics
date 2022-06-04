@@ -7,7 +7,10 @@ import './files/c.js';
 
 const random = Math.random();
 
-const { default: unknownObject } = random > 0.5 ? await import('./files/a.json', { assert: { type: 'json' } }) : await import('./files/b.json', { assert: { type: 'json' } })
+const { default: unknownObject } =
+  random > 0.5
+    ? await import('./files/a.json', { assert: { type: 'json' } })
+    : await import('./files/b.json', { assert: { type: 'json' } });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,11 +23,7 @@ console.log(`Path to current file is ${__filename}`);
 console.log(`Path to current directory is ${__dirname}`);
 
 const createMyServer = createServerHttp((_, res) => {
-    res.end('Request accepted');
+  res.end('Request accepted');
 });
 
-export {
-    unknownObject,
-    createMyServer,
-};
-
+export { unknownObject, createMyServer };

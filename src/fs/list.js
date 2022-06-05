@@ -14,9 +14,7 @@ export const list = async () => {
   } catch (error) {
     if (error.message === errorText) {
       const files = await fs.readdir(path);
-      files.forEach((file) => {
-        console.log(file);
-      });
+      console.log(files);
     } else {
       throw new Error(errorText);
     }

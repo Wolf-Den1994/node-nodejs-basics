@@ -10,7 +10,7 @@ export const spawnChildProcess = async (args) => {
   const __dirname = dirname(__filename);
   const path = `${__dirname}/files/script.js`;
 
-  const child = spawn(`node`, [path, args], {
+  const child = spawn(`node`, [path, ...args], {
     stdio: [stdin, 'pipe'],
   });
 
